@@ -1,0 +1,10 @@
+{
+  "name": "TOC",
+  "desc": "Build a tappable table of contents from notebook Titles.",
+  "iconPath": "assets/table-of-content.png",
+  "versionName": "1.0.0-beta.1",
+  "versionCode": "1",
+  "pluginID": "tocplugin0000001",
+  "pluginKey": "TOC",
+  "jsMainPath": "index"
+}
