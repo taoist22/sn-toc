@@ -1,3 +1,7 @@
+
+
+https://github.com/user-attachments/assets/aa0400e3-179f-4b12-b1e2-cc18e99d4b4a
+
 # Supernote TOC Generator (sn-toc)
 
 A Supernote plugin that automatically scans your notebook for handwritten "Titles" and dynamically inserts a clickable, structured Table of Contents onto the current page.
