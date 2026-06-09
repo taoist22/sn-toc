@@ -90,7 +90,7 @@ export default function TOCPanel() {
             const pageElements = elementsRes.result;
             
             // Find titles on this page
-            const titles = pageElements.filter(el => el?.type === ELEMENT_TYPE_TITLE);
+            const titles = pageElements.filter((el: any) => el?.type === ELEMENT_TYPE_TITLE);
             
             if (titles.length > 0) {
               const sizeRes = (await PluginFileAPI.getPageSize(notePath, p)) as any;
@@ -102,7 +102,7 @@ export default function TOCPanel() {
                 
                 if (trailNums.length > 0) {
                   // Find the exact strokes that make up this title
-                  const strokes = pageElements.filter(el => 
+                  const strokes = pageElements.filter((el: any) => 
                     el?.type === 0 && trailNums.includes(el.numInPage)
                   );
                   
@@ -115,13 +115,32 @@ export default function TOCPanel() {
                     } catch {
                       // OCR failed
                     }
+                  } else {
+                    // Since no strokes matched, check if trailNums refers to a TextBox element containing the typed text
+                    const textBoxEl = pageElements.find((el: any) => 
+                      el?.textBox?.textContentFull && trailNums.includes(el.numInPage)
+                    );
+                    if (textBoxEl?.textBox?.textContentFull) {
+                      recognizedText = textBoxEl.textBox.textContentFull.trim();
+                    }
+                  }
+                }
+                
+                // If the Title element itself has a textBox property, retrieve the text directly
+                if (!recognizedText && titleEl?.textBox?.textContentFull) {
+                  const typedText = titleEl.textBox.textContentFull.trim();
+                  if (typedText) {
+                    recognizedText = typedText;
                   }
                 }
                 
                 // Fallbacks: Try built-in predict_name, then Page #
                 if (!recognizedText && titleEl?.recognizeResult?.predict_name) {
                   const guess = titleEl.recognizeResult.predict_name.trim();
-                  if (guess && guess !== '001') recognizedText = guess;
+                  // Skip default/placeholder numbers (e.g. "001", ".001", "0001", ".0001", etc.)
+                  if (guess && !/^\.?\d+$/.test(guess)) {
+                    recognizedText = guess;
+                  }
                 }
                 
                 if (!recognizedText) {
@@ -215,11 +234,11 @@ export default function TOCPanel() {
 
         // Calculate approximate space leader length
         // We use a rough heuristic: ~45 characters fit across the 800px width.
-        // We subtract the indent size, prefix length, label length, and page string length.
+        // We subtract the indent size, prefix length, label length, page string length, and 3 trailing spaces for link icon clearance.
         const pageStr = String(entry.page + 1);
         const maxChars = isManta ? 55 : 45;
         const indentChars = (currentLeft - TOC_LEFT) / 20; 
-        const remainingChars = maxChars - indentChars - prefix.length - label.length - pageStr.length;
+        const remainingChars = maxChars - indentChars - prefix.length - label.length - pageStr.length - 3;
         
         let spaces = '';
         if (remainingChars > 3) {
@@ -229,12 +248,12 @@ export default function TOCPanel() {
           // If the label is too long, truncate it
           if (label.length > 20) {
              label = label.substring(0, 20) + '...';
-             const newRemain = maxChars - indentChars - prefix.length - label.length - pageStr.length;
+             const newRemain = maxChars - indentChars - prefix.length - label.length - pageStr.length - 3;
              spaces = ' ' + ' '.repeat(Math.max(3, Math.floor(newRemain))) + ' ';
           }
         }
 
-        const finalText = prefix + label + spaces + pageStr;
+        const finalText = prefix + label + spaces + pageStr + '   ';
 
         try {
           const res = (await PluginNoteAPI.insertTextLink({
