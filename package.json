@@ -1,6 +1,6 @@
 {
   "name": "sn-toc",
-  "version": "1.0.0-beta.2",
+  "version": "1.0.0-beta.3",
   "description": "Build a tappable table of contents from notebook Titles.",
   "private": true,
   "scripts": {
