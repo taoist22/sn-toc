@@ -678,6 +678,11 @@ main() {
     local gen_dir
     gen_dir="$(ensure_build_generated_dir "$project_root")"
 
+    if [[ -f "$project_root/tools/patch-metro-watchers.js" ]]; then
+        write_color_output "Applying Metro watcher patch..." "Blue"
+        (cd "$project_root" && node tools/patch-metro-watchers.js)
+    fi
+
     build_react_native_bundle "$project_root" "$PACKAGE_NAME" "$gen_dir"
 
     local root_cfg="$project_root/PluginConfig.json"

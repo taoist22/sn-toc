@@ -1,6 +1,6 @@
 import React from 'react';
-import TOCPanel from './src/TOCPanel';
-import {installPluginRouter} from './src/pluginRouter';
+import TOCPanel from './src/screens/TOCPanel';
+import {installPluginRouter} from './src/app/pluginRouter';
 
 installPluginRouter();
 

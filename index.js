@@ -2,7 +2,7 @@ import {AppRegistry, Image} from 'react-native';
 import App from './App';
 import {name as appName} from './app.json';
 import {PluginManager} from 'sn-plugin-lib';
-import {installPluginRouter} from './src/pluginRouter';
+import {installPluginRouter} from './src/app/pluginRouter';
 
 const BUTTON_TYPE_TOOLBAR = 1;
 const TOOLBAR_BUTTON_ID = 100;
