@@ -12,6 +12,10 @@ import {
   PluginManager,
   PluginNoteAPI,
 } from 'sn-plugin-lib';
+import {
+  requireFileReadPermission,
+  requireFileWritePermission,
+} from '../pluginPermissions';
 import {subscribeToButtonEvents} from '../app/pluginRouter';
 import {
   addScanError,
@@ -191,6 +195,14 @@ export default function TOCPanel() {
     }
     setStatus('Preparing notebook...');
     setScanProgress(null);
+    try {
+      await requireFileReadPermission();
+      await requireFileWritePermission();
+    } catch (e: any) {
+      setStatus(e?.message ?? 'File access was not allowed.');
+      setLoading(false);
+      return;
+    }
     const startedAt = Date.now();
 
     const updateProgress = (
